@@ -8,7 +8,7 @@ python3 main.py [initial state] [heuristic] [output]
 
 heuristic: manhattam or outplace (tiles out-of-place)
 
-args:	--terminal (print the result on terminal)
+output:	--terminal (print the result on terminal)
 	--file (export the result in a file named "output.txt"
         --all (executes the above two commands together)
 ```
