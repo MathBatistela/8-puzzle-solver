@@ -25,20 +25,22 @@ def print_terminal(result_list):
     
 
 if __name__ == '__main__':
-    if len(sys.argv) < 3:
-        print("modo de execução: python3 main.py [estado inicial] [vizualização (--terminal, --file, --all) ]")
-        sys.exit(1)
+    if len(sys.argv) < 4:
+        print("modo de execução: python3 main.py [estado inicial] [heurística (manhattam, outplace)] [vizualização (--terminal, --file, --all) ]")
+        sys.exit(1) 
         
-    board = p.Puzzle(list([int(x) for x in sys.argv[1].split(',')]))
-    result_list = board.solve()
+        
+    board = p.Puzzle(list([int(x) for x in sys.argv[1].split(',')]))  
+
+    result_list = board.solve(sys.argv[2]) 
     
-    visu_param = sys.argv[2]   
+    visu_param = sys.argv[3]   
      
     if visu_param == "--terminal":
         print_terminal(result_list)
     elif visu_param == "--file":
         write_file(result_list)
-    elif visu_param == "--all":
+    else:
         print_terminal(result_list)
         write_file(result_list)
         

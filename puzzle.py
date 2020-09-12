@@ -1,15 +1,21 @@
 import sys
+import heapq
+
 
 class Puzzle:
     
     LENGTH = 3
     goal_state = [1,2,3,4,5,6,7,8,0]
         
-    def __init__(self, state, depth = 0):
+    def __init__(self, state, depth = 0, cost_type = None):
         self.state = state
         self.depth = depth
         self.expansion_order = 0
-        self.cost = self.out_of_place(self.state) + self.depth
+        if cost_type:
+            self.set_cost(cost_type)
+        else:
+            self.cost = None
+            
         
             
     def __str__(self):
@@ -42,6 +48,10 @@ class Puzzle:
                 out = out +1
         return out
     
+    @staticmethod
+    def manhattam_distance(state):
+        return sum(abs(b%3 - g%3) + abs(b//3 - g//3)
+            for b, g in ((state.index(i), Puzzle.goal_state.index(i)) for i in range(1, 9)))
     
     """ Funções que verificam para qual direção é possível mover o espaço vazio """                  
     def can_up(self):
@@ -87,9 +97,20 @@ class Puzzle:
         else:
             sys.exit("Error: Not valid state")
             
+    def set_cost(self, cost_type):
+        if cost_type == "manhattam":
+            self.cost = self.manhattam_distance(self.state) + self.depth
+        elif cost_type == "outplace":
+            self.cost = self.out_of_place(self.state) + self.depth
+        else:
+            print("Err: Heurística desconhecida")
+            sys.exit(1)
+        
+        
+            
             
     """ Função que espande um estado, e retorna todos os estados possíveis numa lista ordenada por custo """        
-    def expand(self,board = None,level_depth = 0 ):
+    def expand(self,board = None,level_depth = 0, cost_type = None ):
         
         if not board:
             board = self
@@ -97,16 +118,16 @@ class Puzzle:
         expansions_list = []
         
         if board.can_up():
-            expansions_list.append(Puzzle(board.move_up(),level_depth))
+            expansions_list.append(Puzzle(board.move_up(),level_depth, cost_type))
             
         if board.can_down():
-            expansions_list.append(Puzzle(board.move_down(),level_depth))
+            expansions_list.append(Puzzle(board.move_down(),level_depth, cost_type))
             
         if board.can_left():
-            expansions_list.append(Puzzle(board.move_left(),level_depth))
+            expansions_list.append(Puzzle(board.move_left(),level_depth, cost_type))
             
         if board.can_right():
-            expansions_list.append(Puzzle(board.move_right(),level_depth))
+            expansions_list.append(Puzzle(board.move_right(),level_depth, cost_type))
             
         expansions_list.sort(key=lambda x: x.cost, reverse=True)
             
@@ -114,13 +135,14 @@ class Puzzle:
     
     
     """ Função que resolve o puzzle """
-    def solve(self):
+    def solve(self, cost_type):
         
         results = []
         depth = 0
         
         self.depth = depth  
         self.expansion_order = 1
+        self.set_cost(cost_type)
         
         stack = []        
         stack.append(self)        
@@ -130,7 +152,7 @@ class Puzzle:
             depth += 1
             actual_board = stack.pop()
             
-            expansions = actual_board.expand(level_depth=depth)
+            expansions = actual_board.expand(level_depth=depth, cost_type = cost_type)
             
             results.append((actual_board, expansions.copy()))
             
