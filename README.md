@@ -4,7 +4,9 @@ A.I - Implemented A* to solve the 8-puzzle problem.
 
 ### Usage
 ```
-python3 main.py [initial state] [args]
+python3 main.py [initial state] [heuristic] [output]
+
+heuristic: manhattam or outplace (tiles out-of-place)
 
 args:	--terminal (print the result on terminal)
 	--file (export the result in a file named "output.txt"
@@ -27,5 +29,5 @@ args:	--terminal (print the result on terminal)
 
 ### Example
 ```
-python3 main.py 1,0,3,4,2,5,7,8,6 --terminal
+python3 main.py 1,0,3,4,2,5,7,8,6 manhattam --terminal
 ```
